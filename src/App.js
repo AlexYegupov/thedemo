@@ -3,8 +3,6 @@ import React, {
   useState,
   useEffect
 } from 'react';
-import InfiniteScroll from 'react-infinite-scroller';
-//import InfiniteScroll from 'React-infinite-scroll-component';
 import logo from './logo.svg';
 import './App.css';
 
@@ -38,38 +36,55 @@ const useDataApi = (initialUrl, initialData) => {
   return [{ data, isLoading, isError }, setUrl];
 };
 
-const TodoList = (props) => (
-    <ul>
-      { props.children }
-    </ul>
+const Todo = ({ text, id, onRemove }) => (
+  <li>
+    { text }
+    <button
+      type="button"
+      className="removeTodoButton"
+      onClick={() => onRemove(id)}
+    >
+      x
+    </button>
+  </li>
 );
 
-const Todo = ({ text, kk }) => (
-  <li key={kk}>{ text }</li>
-);
-
-const NewTodo = ({ onClick }) => {
+const NewTodo = ({ onAdd }) => {
   const [text, setText] = useState('');
 
-  const clicked = () => {
-    onClick(text)
+  const formSubmitted = (event) => {
+    onAdd(text)
     setText('');
+    event.preventDefault();
   }
 
   return (
     <Fragment>
-      <input
-        type="text"
-        value={text}
-        onChange={e => setText(e.target.value)}
-      />
-      <button type="button" onClick={clicked}>Add</button>
+      <form onSubmit={formSubmitted}>
+        <input
+          type="text"
+          value={text}
+          placeholder="do something"
+          onChange={e => setText(e.target.value)}
+        />
+        <button type="submit" disabled={text === ''}>Add</button>
+      </form>
     </Fragment>
   );
 }
 
+const SORT_ORDER_ALPHABETICAL = 'alphabetical'
+const SORT_ORDER_CREATED = 'created'
+const SORT_ORDERS = [SORT_ORDER_CREATED, SORT_ORDER_ALPHABETICAL]
+
+const SORT_ORDERS_SYMBOLS = {
+  [SORT_ORDER_CREATED]:'⇳',
+  [SORT_ORDER_ALPHABETICAL]: '⇩',
+}
+
 function App() {
-  const [todos, setTodos] = useState(['todoA','todoB'])
+  const [todos, setTodos] = useState(['todo A','todo C', 'todo B', 'todo K'])
+  const [sortOrder, setSortOrder] = useState(SORT_ORDER_CREATED);
 
   const [
     { data, isLoading, isError },
@@ -77,70 +92,66 @@ function App() {
   ] = useDataApi('', []);
 
   useEffect(() => {
-    setTodos([...todos, ...data])
-  }, [data]);
+    setTodos([...data, ...todos])
+  }, [data, isLoading]);
 
   const addTodo = (item) => {
-    setTodos([...todos, item]);
+    setTodos([item, ...todos]);
   };
 
-  const addManyTodos = () => {
+  const removeTodo = (index) => {
+    const newTodos = [...todos];
+    newTodos.splice(index, 1);
+    setTodos(newTodos);
+  };
+
+  const addByAjax = () => {
     (async () => {
       doFetch('data.json');
     })();
   }
 
-  const loadFunc = () => {
-    setTodos([...todos, ...[
-      Date.now(),
-      Date.now(),
-      Date.now(),
-      Date.now(),
-      Date.now(),
-      Date.now(),
-      Date.now(),
-      Date.now(),
-      Date.now(),
-      Date.now(),
-      Date.now(),
-      Date.now(),
-      Date.now(),
-      Date.now(),
-      Date.now(),
-      Date.now(),
-      Date.now(),
-      Date.now(),
-    ]]);
+  const switchToNextSortOrder = () => {
+    const nextIndex = (SORT_ORDERS.indexOf(sortOrder) + 1) % SORT_ORDERS.length;
+    setSortOrder(SORT_ORDERS[nextIndex]);
+  }
+
+  let todosSorted;
+  switch (sortOrder) {
+    case SORT_ORDER_CREATED:
+      todosSorted = todos;
+      break;
+    case SORT_ORDER_ALPHABETICAL:
+      todosSorted = [...todos].sort( (a,b) => a.localeCompare(b) );
+      break;
   }
 
   return (
     <div className="App">
       <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
+        <div className="hor">
+          <img src={logo} className="App-logo" alt="logo" />
+          <h1>Todo list</h1>
+        </div>
 
-        <NewTodo onClick={addTodo} />
-        <button type="button" onClick={addManyTodos}>add many</button>
+        <NewTodo onAdd={addTodo} />
+        <button type="button" onClick={addByAjax}>Add multiple</button>
 
-        <TodoList>
-          <div style={{height: 700, overflow:'auto'}}>
-            <InfiniteScroll
-              pageStart={0}
-              loadMore={loadFunc}
-              hasMore={true}
-              loader={
-                <div
-                  key={0} /* https://github.com/danbovey/react-infinite-scroller/issues/133#issuecomment-361241470 */
-                >Loading...</div>
-              }
-              useWindow={false}
-            >
-              { todos.map( (item, i) => (
-                <Todo key={`i${i}`} kk={`i${i}`} text={item} />
+        <ul>
+          <button type="button" onClick={switchToNextSortOrder}>
+            { SORT_ORDERS_SYMBOLS[sortOrder] }
+          </button>
+          { todosSorted.map(
+              (item, i) => (
+                <Todo
+                  key={`i${i}`}
+                  text={item}
+                  id={i}
+                  onRemove={removeTodo}
+                />
               ))
-              }
-            </InfiniteScroll>
-          </div>
-        </TodoList>
+          }
+        </ul>
 
       </header>
     </div>

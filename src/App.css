@@ -1,5 +1,5 @@
 .App {
-  text-align: center;
+  background-color: #282c22;
 }
 
 .App-logo {
@@ -10,11 +10,11 @@
 @media (prefers-reduced-motion: no-preference) {
   .App-logo {
     animation: App-logo-spin infinite 20s linear;
+    height: 5em;
   }
 }
 
 .App-header {
-  background-color: #282c34;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -35,4 +35,23 @@
   to {
     transform: rotate(360deg);
   }
+}
+
+input {
+  margin-bottom: 1em;
+  margin-right: 1em;
+}
+
+button {
+ color: white;
+ background-color: #282c22;
+}
+
+.removeTodoButton {
+  margin-right: 1em;
+  margin-left: 1em;
+}
+
+.hor {
+  display: flex;
 }
