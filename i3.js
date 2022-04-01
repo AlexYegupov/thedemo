@@ -7,29 +7,33 @@ let privatekey = require("./privatekey.json");
 const spreadsheetId = '1-SIrWNLeDRTDHdjqcsChrkWNYKzzlar223kK83Ovmew';
 
 (async () => {
-  let jwtClient = new google.auth.JWT(
-    privatekey.client_email,
-    null,
-    privatekey.private_key,
-    ['https://www.googleapis.com/auth/spreadsheets',
-     'https://www.googleapis.com/auth/drive',
-     'https://www.googleapis.com/auth/calendar']
-  );
+  //
+  // let auth = new google.auth.JWT(
+  //   privatekey.client_email,
+  //   null,
+  //   privatekey.private_key,
+  //   ['https://www.googleapis.com/auth/spreadsheets']
+  // );
+  //
+  // //authenticate request
+  // try {
+  //   const au = await auth.authorize()
+  //   console.log('authorized')
+  //   //console.log(au)
+  // } catch(error) {
+  //   throw error
+  // }
 
-  //authenticate request
-  try {
-    const au = await jwtClient.authorize()
-    console.log('authorized')
-    //console.log(au)
-  } catch(error) {
-    throw error
-  }
+  const auth = new google.auth.GoogleAuth({
+    keyFile: '/path/to/your-secret-key.json',
+    scopes: ['https://www.googleapis.com/auth/spreadsheets'],
+  });
 
   // update
   try {
     const result = await sheets.spreadsheets.values.update(
       {
-        auth: jwtClient,
+        auth,
         spreadsheetId,
         range: 'Sheet1!B3:C4',
         valueInputOption:'RAW',
@@ -59,4 +63,3 @@ const spreadsheetId = '1-SIrWNLeDRTDHdjqcsChrkWNYKzzlar223kK83Ovmew';
   }
 
 })()
-
