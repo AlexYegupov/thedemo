@@ -18,7 +18,7 @@ jwtClient.authorize(function (err, tokens) {
     Console.log(err);
     return;
   } else {
-    console.log("Successfully connected!");
+    console.log("ok");
   }
 });
 
@@ -26,22 +26,52 @@ jwtClient.authorize(function (err, tokens) {
 
 
 //Google Sheets API
-let spreadsheetId = '1-SIrWNLeDRTDHdjqcsChrkWNYKzzlar223kK83Ovmew';
-let sheetName = 'Sheet1!A5:B10'
-
 let sheets = google.sheets('v4');
 
-sheets.spreadsheets.values.get({
+const spreadsheetId = '1-SIrWNLeDRTDHdjqcsChrkWNYKzzlar223kK83Ovmew';
+
+/*
+ * sheets.spreadsheets.values.get({
+ *   auth: jwtClient,
+ *   spreadsheetId,
+ *   range: 'Sheet1!A5:B10'
+ * }, function (err, response) {
+ *   if (err) {
+ *     console.log('The API returned an error: ' + err);
+ *   } else {
+ *     console.log('Movie list from Google Sheets:');
+ *     for (let row of response.data.values) {
+ *       console.log('%s :: %s', row[0], row[1]);
+ *     }
+ *   }
+ * })
+ *  */
+
+// https://docs.google.com/spreadsheets/d/1-SIrWNLeDRTDHdjqcsChrkWNYKzzlar223kK83Ovmew/edit#gid=0
+c
+sheets.spreadsheets.values.update({
   auth: jwtClient,
-  spreadsheetId: spreadsheetId,
-  range: sheetName
-}, function (err, response) {
+  spreadsheetId,
+  range: 'Sheet1!B3:B4',
+  valueInputOption:'RAW',
+  resource: {
+    values: [[new Date()], [new Date()]],
+  }
+
+  //majorDimensions: "ROWS"
+  //range: 'Sheet1!B3:B3',
+  //,
+  //? resource,
+  /* data: [{
+   *   range: 'Sheet1!A3:A3',
+   *   majorDimension: "ROWS",
+   *   values: [[new Date()]]
+   * }] */
+}, (err, result) => {
   if (err) {
-    console.log('The API returned an error: ' + err);
+    throw err;
+    //console.log(err);
   } else {
-    console.log('Movie list from Google Sheets:');
-    for (let row of response.data.values) {
-      console.log('%s :: %s', row[0], row[1]);
-    }
+    console.log('%d cells updated.', result.updatedCells);
   }
 });
