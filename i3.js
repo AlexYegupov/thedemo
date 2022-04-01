@@ -7,25 +7,10 @@ let privatekey = require("./privatekey.json");
 const spreadsheetId = '1-SIrWNLeDRTDHdjqcsChrkWNYKzzlar223kK83Ovmew';
 
 (async () => {
-  //
-  // let auth = new google.auth.JWT(
-  //   privatekey.client_email,
-  //   null,
-  //   privatekey.private_key,
-  //   ['https://www.googleapis.com/auth/spreadsheets']
-  // );
-  //
-  // //authenticate request
-  // try {
-  //   const au = await auth.authorize()
-  //   console.log('authorized')
-  //   //console.log(au)
-  // } catch(error) {
-  //   throw error
-  // }
 
+  // auth by service account key (https://github.com/googleapis/google-api-nodejs-client#using-the-keyfile-property)
   const auth = new google.auth.GoogleAuth({
-    keyFile: '/path/to/your-secret-key.json',
+    keyFile: './privatekey.json',
     scopes: ['https://www.googleapis.com/auth/spreadsheets'],
   });
 
@@ -53,7 +38,7 @@ const spreadsheetId = '1-SIrWNLeDRTDHdjqcsChrkWNYKzzlar223kK83Ovmew';
   // get
   try {
     const getResult = await sheets.spreadsheets.values.get({
-      auth: jwtClient,
+      auth,
       spreadsheetId,
       range: 'Sheet1!B2:C4'
     })

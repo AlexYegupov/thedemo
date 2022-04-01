@@ -2,7 +2,7 @@ demo with node + cra + spreadsheet write data
 
 google cloud project: thedemo (spreadsheet api enabled)
 
-
+key: take from google cloud -> thedemo project -> servise account -> manage keys -> (download as privatekey.json) (once, but can create new key)
 
 # Getting Started with Create React App
 
