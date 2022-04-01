@@ -2,8 +2,6 @@
 
 const { google } = require('googleapis');
 
-const privatekey = require("./privatekey.json");
-
 // set global auth
 // see also: https://github.com/googleapis/google-api-nodejs-client#service-account-credentials
 google.options({
@@ -12,6 +10,8 @@ google.options({
     scopes: ['https://www.googleapis.com/auth/spreadsheets'],
   })
 });
+
+//console.log(`Supporte google apis:`, google.getSupportedAPIs())
 
 const sheets = google.sheets('v4');
 const spreadsheetId = '1-SIrWNLeDRTDHdjqcsChrkWNYKzzlar223kK83Ovmew';
@@ -47,5 +47,6 @@ const spreadsheetId = '1-SIrWNLeDRTDHdjqcsChrkWNYKzzlar223kK83Ovmew';
   } catch (error) {
     console.error('Get error:', error)
   }
+
 
 })()
