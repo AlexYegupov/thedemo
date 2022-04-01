@@ -2,8 +2,7 @@
 
 const { google } = require('googleapis');
 
-// set global auth
-// see also: https://github.com/googleapis/google-api-nodejs-client#service-account-credentials
+// global auth https://github.com/googleapis/google-api-nodejs-client#service-account-credentials
 google.options({
   auth: new google.auth.GoogleAuth({
     keyFile: './privatekey.json',
@@ -11,7 +10,9 @@ google.options({
   })
 });
 
-//console.log(`Supporte google apis:`, google.getSupportedAPIs())
+//console.log(`Supported google apis:`, google.getSupportedAPIs())
+
+const formatDateTimeToCell = (d) => d.toISOString().replace('Z', '');
 
 const sheets = google.sheets('v4');
 const spreadsheetId = '1-SIrWNLeDRTDHdjqcsChrkWNYKzzlar223kK83Ovmew';
@@ -19,17 +20,19 @@ const spreadsheetId = '1-SIrWNLeDRTDHdjqcsChrkWNYKzzlar223kK83Ovmew';
 (async () => {
   // update
   try {
+    const d = new Date();
+
     const result = await sheets.spreadsheets.values.update(
       {
         spreadsheetId,
         range: 'Sheet1!B3:C4',
-        valueInputOption:'RAW',
+        valueInputOption:'USER_ENTERED',
         resource: {
           values: [
-            ['B3', new Date()],
+            ['B3', formatDateTimeToCell(d)],
             ['C3', 'C4']
           ],
-        }
+        },
       }
     )
     console.log(`Updated: ${result.data.updatedCells} cells`)
