@@ -1,24 +1,26 @@
 // working via googleapis with table https://docs.google.com/spreadsheets/d/1-SIrWNLeDRTDHdjqcsChrkWNYKzzlar223kK83Ovmew/edit#gid=0
 
 const { google } = require('googleapis');
-const sheets = google.sheets('v4');
 
-let privatekey = require("./privatekey.json");
+const privatekey = require("./privatekey.json");
+
+// set global auth
+// see also: https://github.com/googleapis/google-api-nodejs-client#service-account-credentials
+google.options({
+  auth: new google.auth.GoogleAuth({
+    keyFile: './privatekey.json',
+    scopes: ['https://www.googleapis.com/auth/spreadsheets'],
+  })
+});
+
+const sheets = google.sheets('v4');
 const spreadsheetId = '1-SIrWNLeDRTDHdjqcsChrkWNYKzzlar223kK83Ovmew';
 
 (async () => {
-
-  // auth by service account key (https://github.com/googleapis/google-api-nodejs-client#using-the-keyfile-property)
-  const auth = new google.auth.GoogleAuth({
-    keyFile: './privatekey.json',
-    scopes: ['https://www.googleapis.com/auth/spreadsheets'],
-  });
-
   // update
   try {
     const result = await sheets.spreadsheets.values.update(
       {
-        auth,
         spreadsheetId,
         range: 'Sheet1!B3:C4',
         valueInputOption:'RAW',
@@ -38,7 +40,6 @@ const spreadsheetId = '1-SIrWNLeDRTDHdjqcsChrkWNYKzzlar223kK83Ovmew';
   // get
   try {
     const getResult = await sheets.spreadsheets.values.get({
-      auth,
       spreadsheetId,
       range: 'Sheet1!B2:C4'
     })
