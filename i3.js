@@ -1,4 +1,7 @@
 // working via googleapis with table https://docs.google.com/spreadsheets/d/1-SIrWNLeDRTDHdjqcsChrkWNYKzzlar223kK83Ovmew/edit#gid=0
+// (not forget to add edit spreadsheet rights to user with emain in privatekey.json ->client_email
+// privatekey.json - key file once downlaoded from https://console.cloud.google.com/iam-admin/serviceaccounts/details/112964587728689522095/keys?project=thedemo-345615
+//   (project: thedemo -> service accounts -> ...@.. -> keys
 
 const { google } = require('googleapis');
 

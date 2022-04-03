@@ -1,3 +1,7 @@
+experimenting with read/write google spreasheet data (see i3.js)
+
+
+-----------
 demo with node + cra + spreadsheet write data
 
 google cloud project: thedemo (spreadsheet api enabled)
